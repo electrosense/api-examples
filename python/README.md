@@ -2,7 +2,7 @@
 # API 
 
 
-The Web API of Electrosense allows to retrieval raw and aggregated spectrum data and even get information about the sensors. To get more details about the API and its functionality check https://test.electrosense.org/open-api-spec.html
+The Web API of Electrosense allows to retrieval raw and aggregated spectrum data and even get information about the sensors. To get more details about the API and its functionality check https://electrosense.org/open-api-spec.html
 
 # Examples
 
