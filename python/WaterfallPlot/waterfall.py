@@ -50,7 +50,7 @@ username=options.username
 password=options.password
 
 # Electrosense API
-MAIN_URI ='https://test.electrosense.org/api'
+MAIN_URI ='https://electrosense.org/api'
 SENSOR_LIST = MAIN_URI + '/sensor/list/'
 SENSOR_AGGREGATED = MAIN_URI + "/spectrum/aggregated"
 
