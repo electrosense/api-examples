@@ -59,19 +59,22 @@ slist_json = json.loads(r.content)
 
 markers = ""
 
+sensing_sensors_list = []
 for sensor in slist_json:
     color = "red"
     state = ""
     if (sensor['sensing']):
+        sensing_sensors_list.append(sensor)
         color = "green"
         state = "S"
+
         
     markers = markers + "markers=color:" + color + "|label:"+ state + "|" + str(sensor['position']['latitude']) + "," + str(sensor['position']['longitude']) + "&"
     
 
 image_file = tempfile.gettempdir() + "/map.jpg"
 
-r = requests.get (url + markers, stream=True)
+r = requests.get(url + markers, stream=True)
 if r.status_code == 200:
     with open(image_file, 'wb') as f:
         r.raw.decode_content = True

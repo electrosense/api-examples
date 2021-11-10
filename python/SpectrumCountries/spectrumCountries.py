@@ -21,11 +21,12 @@
 
 import requests
 import json
+import datetime
 import time
 from urllib.parse import urlencode
 from requests.auth import HTTPBasicAuth
 from collections import OrderedDict
-
+import calendar
 from matplotlib import cm
 import matplotlib.pyplot as plt
 import numpy as np
@@ -81,6 +82,7 @@ def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime
 #Prima cosa---- selezionare i sensori dall' utente invece di selezionare i sensori coding,
 # aggiungendo la logica per selezionare solamente i sensori che sono "sensing" invece di selezionare i sensory hard coded.
 # fix labels on the y axes accordig to the time
+# altra cosa, select the day from the API before make the request
 
 
 
@@ -99,14 +101,33 @@ for sensor in sensing_sensors_list:
     count_active_sensor += 1
 
 
-print(" \n Select two sensors to explore the spectrum \n")
-sensor1 = int(input("Enter first sensor to compare"))  # 28
-sensor2 = int(input("Enter second sensor to compare"))  # 60
+print(" \n Select two sensors to compare spectrum data \n")
+sensor1 = int(input("Enter first sensor from the list  "))  # 28
+sensor2 = int(input("Enter second sensor from the list  "))  # 60
 
 
 sensor_id_A, sensor_id_B = sensing_sensors_list[sensor1]['serial'],sensing_sensors_list[sensor2]['serial']
 sensor_name_A, sensor_name_B = sensing_sensors_list[sensor1]['name'],sensing_sensors_list[sensor2]['name']
 sensor_country_A, sensor_country_B = sensing_sensors_list[sensor1]['country'],sensing_sensors_list[sensor2]['country']
+
+check_day = True
+now = datetime.datetime.now()
+while check_day:
+    day = input("Enter the day [dd]  ")  # 28
+    month = input("Enter the month [mm]  ")
+    year = input("Enter the year [yyyy]  ")
+
+    if int(day) < 31 and int(month) < 12 and int(year) <= now.year:
+        check_day = False
+    elif int(month) == 2 and int(day) > 28: # We dont handle the case if feb has 29 day
+        print("Please insert a true date")
+    else:
+        print("Please insert a true date")
+
+
+timestr = month+" "+day+" "+"10:00:00 "+year
+calendar.timegm(time.strptime(timestr, "%m %d %H:%M:%S %Y"))
+
 
 epoch_time = int(time.time())
 epoch_time = 1599300000
