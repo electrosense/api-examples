@@ -18,33 +18,15 @@
 import requests
 import json
 import time
-
 from requests.auth import HTTPBasicAuth
 from collections import OrderedDict
 from urllib import urlencode
-
 import matplotlib.pyplot as plt
 import numpy as np
-import optparse
-import getpass
 
-parser = optparse.OptionParser("usage: %prog -u <username> [-p <password>]")
-parser.add_option("-u", "--user", dest="username",
-                  type="string",
-                  help="API username")
-parser.add_option("-p", "--pass", dest="password",
-                  type="string", help="API password")
-
-(options, args) = parser.parse_args()
-if not options.username:
-    parser.error("Username not specified")
-
-if not options.password:
-    options.password = getpass.getpass('Password:')
-
-# Electrosense API Credentials 
-username = options.username
-password = options.password
+# Electrosense API Credentials
+username = str(input("Enter Your ElectroSense Username: "))  # 'scalessio'
+password = str(input("Enter Password: "))  # 'zuwhaw-sefda5-Fukfat'
 
 # Electrosense API
 MAIN_URI = 'https://electrosense.org/api'

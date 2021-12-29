@@ -14,43 +14,6 @@
 #
 #  Author : Alessio Scalingi <alessio [dot] scalingi [at] imdea [dot] org)
 
-import requests
-import json
-import datetime
-import time
-from urllib.parse import urlencode
-from requests.auth import HTTPBasicAuth
-from collections import OrderedDict
-import calendar
-from matplotlib import cm
-import matplotlib.pyplot as plt
-import numpy as np
-import optparse
-import getpass
-
-parser = optparse.OptionParser("usage: %prog -u <username> [-p <password>]")
-parser.add_option("-u", "--user", dest="username",
-                  type="string",
-                  help="API username")
-parser.add_option("-p", "--pass", dest="password",
-                    type="string", help="API password")
-
-(options, args) = parser.parse_args()
-if not options.username:
-   parser.error("Username not specified")
-
-if not options.password:
-   options.password = getpass.getpass('Password:')
-
-# Electrosense API Credentials 
-username=options.username
-password=options.password
-
-# Electrosense API
-MAIN_URI ='https://electrosense.org/api'
-SENSOR_LIST = MAIN_URI + '/sensor/list/'
-SENSOR_AGGREGATED = MAIN_URI + "/spectrum/aggregated"
-
 
 def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime, aggFreq):
     params = OrderedDict([('sensor', sensor_id),
@@ -73,15 +36,28 @@ def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime
     else:
         print("Response: %d" % (r.status_code))
         return None
-# Scritto il codicde nella versione di python 3.
-#Prima cosa---- selezionare i sensori dall' utente invece di selezionare i sensori coding,
-# aggiungendo la logica per selezionare solamente i sensori che sono "sensing" invece di selezionare i sensory hard coded.
-# fix labels on the y axes accordig to the time
-# altra cosa, select the day from the API before make the request
 
 
+import requests
+import json
+import datetime
+import time
+from requests.auth import HTTPBasicAuth
+from collections import OrderedDict
+import calendar
+from matplotlib import cm
+import matplotlib.pyplot as plt
+import numpy as np
 
-# Main
+# Electrosense API Credentials
+username = str(input("Enter Your ElectroSense Username: "))  # 'scalessio'
+password = str(input("Enter Password: "))  # 'zuwhaw-sefda5-Fukfat'
+
+# Electrosense API
+MAIN_URI ='https://electrosense.org/api'
+SENSOR_LIST = MAIN_URI + '/sensor/list/'
+SENSOR_AGGREGATED = MAIN_URI + "/spectrum/aggregated"
+
 r = requests.get(SENSOR_LIST, auth=HTTPBasicAuth(username, password))
 slist_json = json.loads(r.content)
 sensing_sensors_list = []
