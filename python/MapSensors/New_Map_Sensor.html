@@ -1,0 +1,224 @@
+<!--
+  ~ Copyright (C) IMDEA Networks Institute 2016
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it under the terms of
+  ~ the GNU General Public License as published by the Free Software Foundation,
+  ~ either version 3 of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+  ~ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  ~ See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with this program.
+  ~ If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Author : Alessio Scalingi <alessio [dot] scalingi [at] imdea [dot] org):
+  ~
+  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <style>
+            .button {
+              border: none;
+              color: white;
+              padding: 16px 32px;
+              text-align: center;
+              text-decoration: none;
+              display: inline-block;
+              font-size: 16px;
+              margin: 4px 2px;
+              transition-duration: 0.4s;
+              cursor: pointer;
+            }
+
+            .button1 {
+              background-color: white;
+              color: black;
+              border: 2px solid #4CAF50;
+            }
+
+            .button1:hover {
+              background-color: #4CAF50;
+              color: white;
+            }
+
+            .button2 {
+              background-color: white;
+              color: black;
+              border: 2px solid #008CBA;
+            }
+
+            .button2:hover {
+              background-color: #008CBA;
+              color: white;
+            }
+</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A==" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
+    </head>
+
+    <body>
+    <div id="map" style="width: 1200px; height: 900px; position: relative; outline: none;" class="leaflet-container leaflet-touch leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0">
+      <div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(0px, 0px, 0px);">
+        <div class="leaflet-pane leaflet-tile-pane">
+          <div class="leaflet-layer " style="z-index: 1; opacity: 1;">
+            <div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(97px, -39px, 0px) scale(1);">
+              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2046/1361?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(-200px, -347px, 0px); opacity: 1;">
+              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2047/1361?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(312px, -347px, 0px); opacity: 1;">
+              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2046/1362?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(-200px, 165px, 0px); opacity: 1;">
+              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2047/1362?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(312px, 165px, 0px); opacity: 1;">
+            </div>
+            <div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 17; transform: translate3d(97px, -39px, 0px) scale(0.5);"></div>
+          </div>
+        </div>
+        <div class="leaflet-pane leaflet-shadow-pane"></div>
+        <div class="leaflet-pane leaflet-overlay-pane"></div>
+        <div class="leaflet-pane leaflet-marker-pane"></div>
+        <div class="leaflet-pane leaflet-tooltip-pane"></div>
+        <div class="leaflet-pane leaflet-popup-pane"></div>
+        <div class="leaflet-proxy leaflet-zoom-animated" style="transform: translate3d(1047954.5px, 697417.5px, 0px) scale(4096);"></div>
+      </div>
+      <div class="leaflet-control-container">
+        <div class="leaflet-top leaflet-left">
+          <div class="leaflet-control-zoom leaflet-bar leaflet-control">
+            <a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in">+</a>
+            <a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out">−</a>
+          </div>
+        </div>
+        <div class="leaflet-top leaflet-right"></div>
+          <div class="leaflet-bottom leaflet-left"></div>
+          <div class="leaflet-bottom leaflet-right">
+              <div class="leaflet-control-attribution leaflet-control">
+                <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> | Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+
+    function convert(obj) {
+        return Object.keys(obj).map(key => ({
+            name: key,
+            value: obj[key]
+        }));
+    }
+
+    var retrived_data = []
+    var sensors_name = []
+    var lat_sensor = []
+    var lon_sensor = []
+    var entries = []
+
+    const getData = () => fetch('./resources/data.json').then(response => response.json())
+        .then(data => {
+            //console.log(data);
+            return data
+        });
+
+    getData().then(data => {
+        // retrived_data = data
+        retrived_data = convert(data)
+
+        for (let step = 0; step < retrived_data.length; step++) {
+          sensors_name = retrived_data[0]
+          lat_sensor = retrived_data[1]
+          lon_sensor = retrived_data[2]
+        }
+
+        sensors_name = Object.values(sensors_name)
+        lat_sensor = Object.values(lat_sensor)
+        lon_sensor = Object.values(lon_sensor)
+
+
+        entries = Object.entries(sensors_name)
+        sensors_name = Object.values(entries[1][1])
+
+        entries = Object.entries(lat_sensor)
+        lat_sensor = Object.values(entries[1][1])
+
+        entries = Object.entries(lon_sensor)
+        lon_sensor = Object.values(entries[1][1])
+
+
+        console.log("Entries sensors")
+        console.log(sensors_name.length)
+        console.log("Entries lat e long")
+        console.log(lat_sensor[1])
+        console.log(lon_sensor[1])
+        mymap = L.map('map').setView([40.4186, -3.7037], 12);
+
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw',
+        {maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1
+          }).addTo(mymap);
+
+        for (let step = 0; step < sensors_name.length; step++) {
+            var sname = sensors_name[step]
+            var lat = lat_sensor[step]
+            var lon = lon_sensor[step]
+            var marker = L.marker([lat, lon]).addTo(mymap);
+            marker.bindPopup(sname,{closeOnClick: false, autoClose: false}).openPopup();
+        }
+
+    });
+
+
+
+    // fetch('./resources/data2.json')
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         retrived_data = convert(data)
+    //
+    //         for (let step = 0; step < retrived_data.length; step++) {
+    //           sensors_name = retrived_data[0]
+    //           lat_sensor = retrived_data[1]
+    //           lon_sensor = retrived_data[2]
+    //         }
+    //
+    //         sensors_name = Object.values(sensors_name)
+    //         lat_sensor = Object.values(lat_sensor)
+    //         lon_sensor = Object.values(lon_sensor)
+    //
+    //
+    //         entries = Object.entries(sensors_name)
+    //         sensors_name = Object.values(entries[1][1])
+    //
+    //         entries = Object.entries(lat_sensor)
+    //         lat_sensor = Object.values(entries[1][1])
+    //
+    //         entries = Object.entries(lon_sensor)
+    //         lon_sensor = Object.values(entries[1][1])
+    //
+    //
+    //         //console.log("Entries sensors")
+    //         //console.log(sensors_name.length)
+    //         //console.log("Entries lat e long")
+    //         //console.log(lat_sensor[1])
+    //         //console.log(lon_sensor[1])
+    //
+    //         for (let step = 0; step < sensors_name.length; step++) {
+    //             //console.log(lat_sensor[step])
+    //             //console.log(lon_sensor[step])
+    //             //console.log(lon_sensor[step])
+    //
+    //            //marker.bindPopup("<b>{sensors_name[step]}</b>",{closeOnClick: false, autoClose: false}).openPopup();
+    //         }
+    //
+    //     })
+
+
+
+
+    </script>
+    </body>
+</html>
