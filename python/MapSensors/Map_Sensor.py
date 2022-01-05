@@ -1,5 +1,5 @@
 # !/usr/bin/env python
-#  Copyright (C) IMDEA Networks Institute 2016
+#  Copyright (C) IMDEA Networks Institute 2022
 #
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
 # License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any
@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License along with this program.  If not,
 # see http://www.gnu.org/licenses/.
 #
-#  Author : Alessio Scalingi <alessio [dot] scalingi [at] imdea [dot] org)
+#  Author : Alessio Scalingi <alessio [dot] scalingi [at] imdea [dot] org
 
 import json
 import requests
@@ -77,6 +77,5 @@ country_df['City'] = country_df['City'].apply(lambda x: x.lstrip())
 country_df = country_df.drop(['index'], axis=1)
 country_df.columns = ['Sensor Name', 'lon', 'lat', 'country', 'City']
 dic = country_df[['Sensor Name', 'lat', 'lon']].to_dict()
-
 with open('resources/data.json', 'w') as fp:
     json.dump(dic, fp)

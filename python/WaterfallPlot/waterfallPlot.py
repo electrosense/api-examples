@@ -1,4 +1,5 @@
-# !/usr/bin/env python
+#!/usr/bin/env python
+#
 #  Copyright (C) IMDEA Networks Institute 2022
 #
 # This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
@@ -12,7 +13,8 @@
 # You should have received a copy of the GNU General Public License along with this program.  If not,
 # see http://www.gnu.org/licenses/.
 #
-#  Author : Alessio Scalingi <alessio [dot] scalingi [at] imdea [dot] org
+#  Author : Alessio Scalingi <alessio [dot] scalingi [at] imdea [dot] org:
+#
 
 from urllib.parse import urlencode
 import requests
@@ -25,6 +27,7 @@ import calendar
 from matplotlib import cm
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime, aggFreq):
     params = OrderedDict([('sensor', sensor_id),
@@ -48,7 +51,6 @@ def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime
         print("Response: %d" % (r.status_code))
         return None
 
-
 # Electrosense API Credentials
 username = str(input("Enter Your ElectroSense Username: "))
 password = str(input("Enter Password: "))
@@ -68,18 +70,16 @@ for sensor in slist_json:
 count_active_sensor = 0
 for sensor in sensing_sensors_list:
     sname,sserial,scountry = str(sensor['name']),sensor['serial'],sensor['country']
-    print(count_active_sensor, sname, sserial)
+    print("Pos: ",count_active_sensor, sname, sserial)
     count_active_sensor += 1
 
 
-print(" \n Select two sensors to compare spectrum data \n")
-sensor1 = int(input("Enter first sensor from the list  "))  # 28
-sensor2 = int(input("Enter second sensor from the list  "))  # 60
+print(" \n Select the sensor to plot the Spectrum Waterfall \n")
+sensor1 = int(input("Enter sensor position  "))  # 28
 
-
-sensor_id_A, sensor_id_B = sensing_sensors_list[sensor1]['serial'],sensing_sensors_list[sensor2]['serial']
-sensor_name_A, sensor_name_B = sensing_sensors_list[sensor1]['name'],sensing_sensors_list[sensor2]['name']
-sensor_country_A, sensor_country_B = sensing_sensors_list[sensor1]['country'],sensing_sensors_list[sensor2]['country']
+sensor_id_A = sensing_sensors_list[sensor1]['serial']
+sensor_name_A = sensing_sensors_list[sensor1]['name']
+sensor_country_A = sensing_sensors_list[sensor1]['country']
 
 check_day = True
 now = datetime.datetime.now()
@@ -100,67 +100,57 @@ timestr = month+" "+day+" "+"10:00:00 "+year
 calendar.timegm(time.strptime(timestr, "%m %d %H:%M:%S %Y"))
 
 
+timestr = month+" "+day+" "+"10:00:00 "+year
+calendar.timegm(time.strptime(timestr, "%m %d %H:%M:%S %Y"))
+
+
 # epoch_time = 1599300000
 epoch_time = calendar.timegm(time.strptime(timestr, "%m %d %H:%M:%S %Y"))
 timeBegin = epoch_time  # - 3600 * 48
 # timeEnd = epoch_time - 3600 * 45
-timeEnd = epoch_time + 3600 * 3
 
-sensors_id = [sensor_id_A, sensor_id_B]
-sensors_loc = [sensor_country_A, sensor_country_B]
-plot_id = [211, 212]
 
-time_resolution = 60
-freq_resolution = int(4e6)
+check_input = True
+while check_input:
+    time_resolution = int(input("Enter the Time Resolution [seconds] e.g. 60: "))
+    freq_resolution = int(input("Enter the Frequency Resolution [Hz] e.g. 100000: "))
+    freqMin = int(input("Enter the Start Frequency [Hz] e.g. 80000000: "))
+    freqMax = int(input("Enter the End Frequency [Hz] e.g. 90000000: "))
 
-freqMin = int(25.00 * 1e6)
-freqMax = int(1600.00 * 1e6)
+    duration =  int(input("Enter how many hours of spectrum measurement (max 6) e.g. 4: "))
+    timeEnd = epoch_time + 3600 * duration
 
-fig, ax = plt.subplots(2, 1, figsize=(20,13))
-plt.suptitle('Spectrum usage (' + time.strftime("%d %b %Y", time.gmtime(timeBegin))+')',y=1.0)
+    # freq_resolution = int(4e6)
+    # freqMin = int(25.00 * 1e6)
+    # freqMax = int(1600.00 * 1e6)
+    if time_resolution >= 60 and freq_resolution >= 10000 and freqMin >= int(25.00 * 1e6) and int(
+            1600.00 * 1e6) >= freqMax > freqMin and 6 >= duration > 1:
+        check_input = False
+    else:
+        print("Invalid input parameters for the Electrosense Aggregate API, check the documentation and repeat... \n")
+
+sns.set_context("paper", rc={"font.size":20,"axes.titlesize":30,"axes.labelsize":30,
+                             "xtick.labelsize" : 30,"ytick.labelsize" : 30})
 response = get_spectrum_data(sensor_id_A, timeBegin, timeEnd, freqMin, freqMax, time_resolution, freq_resolution)
-
+fig, ax = plt.subplots(1, 1, figsize=(15,10))
 if (response != None):
      A = np.array([np.array(xi) for xi in response['values']])
-     ax[0].imshow(A, aspect='auto', cmap=cm.jet)
-     img = ax[0].imshow(A, aspect='auto',
+     ax.imshow(A, aspect='auto', cmap=cm.jet)
+     img = ax.imshow(A, aspect='auto',
                 extent=[freqMin / 1e6, freqMax / 1e6, timeEnd, timeBegin],
                 cmap=cm.jet)
 
-     ylabels = [item.get_text() for item in ax[0].get_yticklabels()]
+     ylabels = [item.get_text() for item in ax.get_yticklabels()]
      date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
      date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
      ylabels = date_text
-     ax[0].set_yticklabels(ylabels)
-     ax[0].set_title("Sensor %s" % sensor_name_A,pad=2)
-     # ax[0].set_xlabel('frequency (MHz)')
-     ax[0].set_ylabel('time')
-     c = plt.colorbar(img, ax=ax[0])
-     c.set_label("Power (dB)")
-
-
-response = get_spectrum_data(sensor_id_B, timeBegin, timeEnd, freqMin, freqMax, time_resolution, freq_resolution)
-date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / 10)
-date_text = np.array([np.array(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values])
-if (response != None):
-     A = np.array([np.array(xi) for xi in response['values']])
-     ax[1].imshow(A, aspect='auto', cmap=cm.jet)
-     img = ax[1].imshow(A, aspect='auto',
-                extent=[freqMin / 1e6, freqMax / 1e6, timeEnd, timeBegin],
-                cmap=cm.jet)
-     ylabels = [item.get_text() for item in ax[0].get_yticklabels()]
-     date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
-     date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
-     ylabels = date_text
-     ax[1].set_yticklabels(ylabels)
-     ax[1].set_title("Sensor %s" % sensor_name_B,pad=2)
-     ax[1].set_xlabel('frequency (MHz)')
-     ax[1].set_ylabel('time')
-     c = plt.colorbar(img, ax=ax[1])
-     c.set_label("Power (dB)")
+     ax.set_yticklabels(ylabels)
+     ax.set_title("Sensor %s" % sensor_name_A,pad=2)
+     ax.set_xlabel('frequency (MHz)',fontsize=28)
+     ax.set_ylabel('time',fontsize=28)
+     c = plt.colorbar(img, ax=ax)
+     c.set_label("Power (dB/Hz)",fontsize=24)
 
 fig.tight_layout()
-plt.savefig('./resources/output_spec_countries.png')
+plt.savefig('./resources/Waterfall_%s.png'%sensor_name_A)
 plt.show()
-    
-
