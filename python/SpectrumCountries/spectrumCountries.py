@@ -13,7 +13,17 @@
 # see http://www.gnu.org/licenses/.
 #
 #  Author : Alessio Scalingi <alessio [dot] scalingi [at] imdea [dot] org)
-
+from urllib.parse import urlencode
+import requests
+import json
+import datetime
+import time
+from requests.auth import HTTPBasicAuth
+from collections import OrderedDict
+import calendar
+from matplotlib import cm
+import matplotlib.pyplot as plt
+import numpy as np
 
 def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime, aggFreq):
     params = OrderedDict([('sensor', sensor_id),
@@ -38,20 +48,9 @@ def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime
         return None
 
 
-import requests
-import json
-import datetime
-import time
-from requests.auth import HTTPBasicAuth
-from collections import OrderedDict
-import calendar
-from matplotlib import cm
-import matplotlib.pyplot as plt
-import numpy as np
-
 # Electrosense API Credentials
-username = str(input("Enter Your ElectroSense Username: "))  # 'scalessio'
-password = str(input("Enter Password: "))  # 'zuwhaw-sefda5-Fukfat'
+username = str(input("Enter Your ElectroSense Username: "))
+password = str(input("Enter Password: "))
 
 # Electrosense API
 MAIN_URI ='https://electrosense.org/api'
@@ -88,7 +87,7 @@ while check_day:
     month = input("Enter the month [mm]  ")
     year = input("Enter the year [yyyy]  ")
 
-    if int(day) < 31 and int(month) < 12 and int(year) <= now.year:
+    if int(day) < 31 and int(month) <= 12 and int(year) <= now.year:
         check_day = False
     elif int(month) == 2 and int(day) > 28: # We dont handle the case if feb has 29 day
         print("Please insert a true date")
@@ -100,10 +99,11 @@ timestr = month+" "+day+" "+"10:00:00 "+year
 calendar.timegm(time.strptime(timestr, "%m %d %H:%M:%S %Y"))
 
 
-epoch_time = int(time.time())
-epoch_time = 1599300000
-timeBegin = epoch_time - 3600 * 48
-timeEnd = epoch_time - 3600 * 45
+# epoch_time = 1599300000
+epoch_time = calendar.timegm(time.strptime(timestr, "%m %d %H:%M:%S %Y"))
+timeBegin = epoch_time  # - 3600 * 48
+# timeEnd = epoch_time - 3600 * 45
+timeEnd = epoch_time + 3600 * 3
 
 sensors_id = [sensor_id_A, sensor_id_B]
 sensors_loc = [sensor_country_A, sensor_country_B]
@@ -115,7 +115,7 @@ freq_resolution = int(4e6)
 freqMin = int(25.00 * 1e6)
 freqMax = int(1600.00 * 1e6)
 
-fig, ax = plt.subplots(2, 1)
+fig, ax = plt.subplots(2, 1, figsize=(20,13))
 plt.suptitle('Spectrum usage (' + time.strftime("%d %b %Y", time.gmtime(timeBegin))+')',y=1.0)
 response = get_spectrum_data(sensor_id_A, timeBegin, timeEnd, freqMin, freqMax, time_resolution, freq_resolution)
 
@@ -129,7 +129,6 @@ if (response != None):
      ylabels = [item.get_text() for item in ax[0].get_yticklabels()]
      date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
      date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
-     date_text
      ylabels = date_text
      ax[0].set_yticklabels(ylabels)
      ax[0].set_title("Sensor %s" % sensor_name_A,pad=2)
@@ -151,7 +150,6 @@ if (response != None):
      ylabels = [item.get_text() for item in ax[0].get_yticklabels()]
      date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
      date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
-     date_text
      ylabels = date_text
      ax[1].set_yticklabels(ylabels)
      ax[1].set_title("Sensor %s" % sensor_name_B,pad=2)
@@ -161,6 +159,7 @@ if (response != None):
      c.set_label("Power (dB)")
 
 fig.tight_layout()
+
 #plt.savefig('./resources/output.png')
 plt.show()
     
