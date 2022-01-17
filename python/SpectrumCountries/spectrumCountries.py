@@ -26,6 +26,7 @@ from matplotlib import cm
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime, aggFreq):
     params = OrderedDict([('sensor', sensor_id),
                           ('timeBegin', timeBegin),
@@ -36,18 +37,26 @@ def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime
                           ('aggTime', aggTime),
                           ('aggFun', 'AVG')])
 
-    r = requests.get(SENSOR_AGGREGATED, auth=HTTPBasicAuth(username, password), params=urlencode(params))
+    try:
+        r = requests.get(SENSOR_AGGREGATED, auth=HTTPBasicAuth(username, password), params=urlencode(params))
+        print(r.url)
+        print(r.status_code)
+        print(r.content)
 
-    print(r.url)
-    print(r.status_code)
-    print(r.content)
+        if r.content == b'':
+            raise NameError('NoSpectrum')
 
-    if r.status_code == 200:
-        return json.loads(r.content)
-    else:
-        print("Response: %d" % (r.status_code))
+        if r.status_code == 200:
+            return json.loads(r.content)
+        else:
+            print("Response: %d" % (r.status_code))
+            return None
+    except NameError:
+        print("No Spectrum data in this period... try another day")
+
+    except Exception as error:
+        print(error)
         return None
-
 
 # Electrosense API Credentials
 username = str(input("Enter Your ElectroSense Username: "))
@@ -121,46 +130,63 @@ plt.suptitle('Spectrum usage (' + time.strftime("%d %b %Y", time.gmtime(timeBegi
 response = get_spectrum_data(sensor_id_A, timeBegin, timeEnd, freqMin, freqMax, time_resolution, freq_resolution)
 
 if (response != None):
-     A = np.array([np.array(xi) for xi in response['values']])
-     ax[0].imshow(A, aspect='auto', cmap=cm.jet)
-     img = ax[0].imshow(A, aspect='auto',
-                extent=[freqMin / 1e6, freqMax / 1e6, timeEnd, timeBegin],
-                cmap=cm.jet)
+    try:
+        if [] in response['values'] or 'null' in response['values']:
+            raise NameError('NullPSD')
+        A = np.array([np.array(xi) for xi in response['values']])
+        ax[0].imshow(A, aspect='auto', cmap=cm.jet)
+        img = ax[0].imshow(A, aspect='auto',
+                    extent=[freqMin / 1e6, freqMax / 1e6, timeEnd, timeBegin],
+                    cmap=cm.jet)
 
-     ylabels = [item.get_text() for item in ax[0].get_yticklabels()]
-     date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
-     date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
-     ylabels = date_text
-     ax[0].set_yticklabels(ylabels)
-     ax[0].set_title("Sensor %s" % sensor_name_A,pad=2)
-     # ax[0].set_xlabel('frequency (MHz)')
-     ax[0].set_ylabel('time')
-     c = plt.colorbar(img, ax=ax[0])
-     c.set_label("Power (dB)")
+        ylabels = [item.get_text() for item in ax[0].get_yticklabels()]
+        date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
+        date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
+        ylabels = date_text
+        ax[0].set_yticklabels(ylabels)
+        ax[0].set_title("Sensor %s" % sensor_name_A,pad=2)
+        # ax[0].set_xlabel('frequency (MHz)')
+        ax[0].set_ylabel('time')
+        c = plt.colorbar(img, ax=ax[0])
+        c.set_label("Power (dB)")
+    except NameError:
+        print("Warning: during this period some PSD information are missed, try another day.")
+    except Exception as error:
+        print(error)
 
 
 response = get_spectrum_data(sensor_id_B, timeBegin, timeEnd, freqMin, freqMax, time_resolution, freq_resolution)
 date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / 10)
 date_text = np.array([np.array(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values])
 if (response != None):
-     A = np.array([np.array(xi) for xi in response['values']])
-     ax[1].imshow(A, aspect='auto', cmap=cm.jet)
-     img = ax[1].imshow(A, aspect='auto',
+    try:
+        if [] in response['values'] or 'null' in response['values']:
+            raise NameError('NullPSD')
+        A = np.array([np.array(xi) for xi in response['values']])
+        ax[1].imshow(A, aspect='auto', cmap=cm.jet)
+        img = ax[1].imshow(A, aspect='auto',
                 extent=[freqMin / 1e6, freqMax / 1e6, timeEnd, timeBegin],
                 cmap=cm.jet)
-     ylabels = [item.get_text() for item in ax[0].get_yticklabels()]
-     date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
-     date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
-     ylabels = date_text
-     ax[1].set_yticklabels(ylabels)
-     ax[1].set_title("Sensor %s" % sensor_name_B,pad=2)
-     ax[1].set_xlabel('frequency (MHz)')
-     ax[1].set_ylabel('time')
-     c = plt.colorbar(img, ax=ax[1])
-     c.set_label("Power (dB)")
+        ylabels = [item.get_text() for item in ax[0].get_yticklabels()]
+        date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
+        date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
+        ylabels = date_text
+        ax[1].set_yticklabels(ylabels)
+        ax[1].set_title("Sensor %s" % sensor_name_B,pad=2)
+        ax[1].set_xlabel('frequency (MHz)')
+        ax[1].set_ylabel('time')
+        c = plt.colorbar(img, ax=ax[1])
+        c.set_label("Power (dB)")
+        fig.tight_layout()
+        plt.savefig('./resources/output_spec_countries.png')
+        plt.show()
+    except NameError:
+        print("Warning: during this period some PSD information are missed. Can't plot the entire spectrogram, try another day.")
+    except Exception as error:
+        print(error)
+        print("Warning: during this period some PSD information are missed. Can't plot the entire spectrogram, try another day.")
 
-fig.tight_layout()
-plt.savefig('./resources/output_spec_countries.png')
-plt.show()
+
+
     
 

@@ -39,16 +39,25 @@ def get_spectrum_data(sensor_id, timeBegin, timeEnd, freq_min, freq_max, aggTime
                           ('aggTime', aggTime),
                           ('aggFun', 'AVG')])
 
-    r = requests.get(SENSOR_AGGREGATED, auth=HTTPBasicAuth(username, password), params=urlencode(params))
+    try:
+        r = requests.get(SENSOR_AGGREGATED, auth=HTTPBasicAuth(username, password), params=urlencode(params))
+        print(r.url)
+        print(r.status_code)
+        print(r.content)
 
-    print(r.url)
-    print(r.status_code)
-    print(r.content)
+        if r.content == b'':
+            raise NameError('NoSpectrum')
 
-    if r.status_code == 200:
-        return json.loads(r.content)
-    else:
-        print("Response: %d" % (r.status_code))
+        if r.status_code == 200:
+            return json.loads(r.content)
+        else:
+            print("Response: %d" % (r.status_code))
+            return None
+    except NameError:
+        print("No Spectrum data in this period... try another day")
+
+    except Exception as error:
+        print(error)
         return None
 
 # Electrosense API Credentials
@@ -132,23 +141,47 @@ sns.set_context("paper", rc={"font.size":20,"axes.titlesize":30,"axes.labelsize"
 response = get_spectrum_data(sensor_id_A, timeBegin, timeEnd, freqMin, freqMax, time_resolution, freq_resolution)
 fig, ax = plt.subplots(1, 1, figsize=(15,10))
 if (response != None):
-     A = np.array([np.array(xi) for xi in response['values']])
-     ax.imshow(A, aspect='auto', cmap=cm.jet)
-     img = ax.imshow(A, aspect='auto',
-                extent=[freqMin / 1e6, freqMax / 1e6, timeEnd, timeBegin],
-                cmap=cm.jet)
+    try:
+        if [] in response['values']:
+            raise NameError('NullPSD')
+        A = np.array([np.array(xi) for xi in response['values']])
+        ax.imshow(A, aspect='auto', cmap=cm.jet)
+        img = ax.imshow(A, aspect='auto',
+                    extent=[freqMin / 1e6, freqMax / 1e6, timeEnd, timeBegin],
+                    cmap=cm.jet)
 
-     ylabels = [item.get_text() for item in ax.get_yticklabels()]
-     date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
-     date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
-     ylabels = date_text
-     ax.set_yticklabels(ylabels)
-     ax.set_title("Sensor %s" % sensor_name_A,pad=2)
-     ax.set_xlabel('frequency (MHz)',fontsize=28)
-     ax.set_ylabel('time',fontsize=28)
-     c = plt.colorbar(img, ax=ax)
-     c.set_label("Power (dB/Hz)",fontsize=24)
+        ylabels = [item.get_text() for item in ax.get_yticklabels()]
+        date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
+        date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
+        ylabels = date_text
+        ax.set_yticklabels(ylabels)
+        ax.set_title("Sensor %s" % sensor_name_A,pad=2)
+        ax.set_xlabel('frequency (MHz)',fontsize=28)
+        ax.set_ylabel('time',fontsize=28)
+        c = plt.colorbar(img, ax=ax)
+        c.set_label("Power (dB/Hz)",fontsize=24)
+        fig.tight_layout()
+        plt.savefig('./resources/Waterfall_%s.png' % sensor_name_A)
+        plt.show()
+    except NameError:
+        print("Warning: during this period some PSD information are missed. Can't plot the entire spectrogram, try another day.")
+        ## Remove from the spectrogram empty lists in order to plot the waterfall
+        # list2 = [x for x in response['values'] if x != []]
+        # A = np.array([np.array(xi) for xi in list2])
+        # ax.imshow(A, aspect='auto', cmap=cm.jet)
+        # img = ax.imshow(A, aspect='auto',
+        #                extent=[freqMin / 1e6, freqMax / 1e6, timeEnd, timeBegin],
+        #                cmap=cm.jet)
 
-fig.tight_layout()
-plt.savefig('./resources/Waterfall_%s.png'%sensor_name_A)
-plt.show()
+        #ylabels = [item.get_text() for item in ax.get_yticklabels()]
+        #date_values = np.arange(timeBegin, timeEnd, (timeEnd - timeBegin) / len(ylabels))
+        #date_text = [(time.strftime("%H:%M", time.gmtime(xi))) for xi in date_values]
+        #ylabels = date_text
+        #ax.set_yticklabels(ylabels)
+        #ax.set_title("Sensor %s" % sensor_name_A, pad=2)
+        #ax.set_xlabel('frequency (MHz)', fontsize=28)
+        #ax.set_ylabel('time', fontsize=28)
+        #c = plt.colorbar(img, ax=ax)
+        #c.set_label("Power (dB/Hz)", fontsize=24)
+    except Exception as error:
+        print(error)
