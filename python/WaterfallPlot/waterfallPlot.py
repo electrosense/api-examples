@@ -90,7 +90,7 @@ while check_day:
 
     if int(day) < 31 and int(month) <= 12 and int(year) <= now.year:
         check_day = False
-    elif int(month) == 2 and int(day) > 28: # We dont handle the case if feb has 29 day
+    elif int(month) == 2 and int(day) > 28:
         print("Please insert a true date")
     else:
         print("Please insert a true date")
@@ -103,8 +103,6 @@ calendar.timegm(time.strptime(timestr, "%m %d %H:%M:%S %Y"))
 timestr = month+" "+day+" "+"10:00:00 "+year
 calendar.timegm(time.strptime(timestr, "%m %d %H:%M:%S %Y"))
 
-
-# epoch_time = 1599300000
 epoch_time = calendar.timegm(time.strptime(timestr, "%m %d %H:%M:%S %Y"))
 timeBegin = epoch_time  # - 3600 * 48
 # timeEnd = epoch_time - 3600 * 45

@@ -20,7 +20,6 @@ from requests.auth import HTTPBasicAuth
 import pandas as pd
 from geopy.geocoders import Nominatim
 
-
 def get_city(row):
     try:
         lat = row['lat']
@@ -37,8 +36,8 @@ def get_city(row):
         return addr.split(",")[1].strip()
 
 # Electrosense API Credentials
-username = str(input("Enter Your ElectroSense Username: "))  # 'scalessio'
-password = str(input("Enter Password: "))  # 'zuwhaw-sefda5-Fukfat'
+username = str(input("Enter Your ElectroSense Username: "))
+password = str(input("Enter Password: "))
 
 # Electrosense API
 MAIN_URI = 'https://electrosense.org/api'
@@ -69,11 +68,9 @@ df["City"] = df.apply(get_city, axis=1)
 print(df['country'].value_counts().index.to_list())
 print("Type Country:  \n")
 Country = str(input("Enter Country "))  # 28
-# City = int(input("Enter City"))  # 60
 
 country_df = df[df.country == Country].reset_index()
 country_df['City'] = country_df['City'].apply(lambda x: x.lstrip())
-# country_df[country_df['City'] == 'Sperlonga']
 country_df = country_df.drop(['index'], axis=1)
 country_df.columns = ['Sensor Name', 'lon', 'lat', 'country', 'City']
 dic = country_df[['Sensor Name', 'lat', 'lon']].to_dict()

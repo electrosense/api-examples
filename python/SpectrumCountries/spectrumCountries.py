@@ -84,13 +84,13 @@ sensor_country_A, sensor_country_B = sensing_sensors_list[sensor1]['country'],se
 check_day = True
 now = datetime.datetime.now()
 while check_day:
-    day = input("Enter the day [dd]  ")  # 28
+    day = input("Enter the day [dd]  ")
     month = input("Enter the month [mm]  ")
     year = input("Enter the year [yyyy]  ")
 
     if int(day) < 31 and int(month) <= 12 and int(year) <= now.year:
         check_day = False
-    elif int(month) == 2 and int(day) > 28: # We dont handle the case if feb has 29 day
+    elif int(month) == 2 and int(day) > 28:
         print("Please insert a true date")
     else:
         print("Please insert a true date")
@@ -117,7 +117,7 @@ freqMin = int(25.00 * 1e6)
 freqMax = int(1600.00 * 1e6)
 
 fig, ax = plt.subplots(2, 1, figsize=(20,13))
-plt.suptitle('Spectrum usage (' + time.strftime("%d %b %Y", time.gmtime(timeBegin))+')',y=1.0)
+plt.suptitle('Spectrum usage (' + time.strftime("%d %b %Y", time.gmtime(timeBegin))+')', y=1.0)
 response = get_spectrum_data(sensor_id_A, timeBegin, timeEnd, freqMin, freqMax, time_resolution, freq_resolution)
 
 if (response != None):

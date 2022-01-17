@@ -62,17 +62,18 @@
     </head>
 
     <body>
-    <div id="map" style="width: 1200px; height: 900px; position: relative; outline: none;" class="leaflet-container leaflet-touch leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0">
+
+    <div id="map" style="width: 1200px; height: 900px; outline: none;" class="leaflet-container leaflet-touch leaflet-retina leaflet-safari leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0">
       <div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(0px, 0px, 0px);">
         <div class="leaflet-pane leaflet-tile-pane">
           <div class="leaflet-layer " style="z-index: 1; opacity: 1;">
-            <div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(97px, -39px, 0px) scale(1);">
-              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2046/1361?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(-200px, -347px, 0px); opacity: 1;">
-              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2047/1361?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(312px, -347px, 0px); opacity: 1;">
-              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2046/1362?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(-200px, 165px, 0px); opacity: 1;">
-              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2047/1362?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(312px, 165px, 0px); opacity: 1;">
-            </div>
-            <div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 17; transform: translate3d(97px, -39px, 0px) scale(0.5);"></div>
+<!--            <div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(97px, -39px, 0px) scale(1);">-->
+<!--              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2046/1361?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(-200px, -347px, 0px); opacity: 1;">-->
+<!--              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2047/1361?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(312px, -347px, 0px); opacity: 1;">-->
+<!--              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2046/1362?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(-200px, 165px, 0px); opacity: 1;">-->
+<!--              <img alt="" role="presentation" src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/12/2047/1362?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" class="leaflet-tile leaflet-tile-loaded" style="width: 512px; height: 512px; transform: translate3d(312px, 165px, 0px); opacity: 1;">-->
+<!--            </div>-->
+<!--            <div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 17; transform: translate3d(97px, -39px, 0px) scale(0.5);"></div>-->
           </div>
         </div>
         <div class="leaflet-pane leaflet-shadow-pane"></div>
@@ -102,8 +103,6 @@
     </div>
 
     <script>
-
-
     function convert(obj) {
         return Object.keys(obj).map(key => ({
             name: key,
@@ -171,51 +170,6 @@
         }
 
     });
-
-
-
-    // fetch('./resources/data2.json')
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         retrived_data = convert(data)
-    //
-    //         for (let step = 0; step < retrived_data.length; step++) {
-    //           sensors_name = retrived_data[0]
-    //           lat_sensor = retrived_data[1]
-    //           lon_sensor = retrived_data[2]
-    //         }
-    //
-    //         sensors_name = Object.values(sensors_name)
-    //         lat_sensor = Object.values(lat_sensor)
-    //         lon_sensor = Object.values(lon_sensor)
-    //
-    //
-    //         entries = Object.entries(sensors_name)
-    //         sensors_name = Object.values(entries[1][1])
-    //
-    //         entries = Object.entries(lat_sensor)
-    //         lat_sensor = Object.values(entries[1][1])
-    //
-    //         entries = Object.entries(lon_sensor)
-    //         lon_sensor = Object.values(entries[1][1])
-    //
-    //
-    //         //console.log("Entries sensors")
-    //         //console.log(sensors_name.length)
-    //         //console.log("Entries lat e long")
-    //         //console.log(lat_sensor[1])
-    //         //console.log(lon_sensor[1])
-    //
-    //         for (let step = 0; step < sensors_name.length; step++) {
-    //             //console.log(lat_sensor[step])
-    //             //console.log(lon_sensor[step])
-    //             //console.log(lon_sensor[step])
-    //
-    //            //marker.bindPopup("<b>{sensors_name[step]}</b>",{closeOnClick: false, autoClose: false}).openPopup();
-    //         }
-    //
-    //     })
-
 
 
 
